@@ -1,6 +1,15 @@
 #!/bin/bash
 
+DOTFILES="/Users/jh/code-jh/dotfiles"
 echo "Starting setup..."
+
+# Clean up existing configurations
+echo "Cleaning up existing configurations..."
+rm -rf ~/.config/wezterm
+rm -rf ~/.config/yazi
+rm -rf ~/.config/aerospace
+rm -f ~/.gitconfig
+rm -f ~/.gitignore_global
 
 # Install Homebrew if not installed
 if ! command -v brew &> /dev/null; then
@@ -28,18 +37,21 @@ brew install --cask nikitabobko/tap/aerospace
 
 # Create symbolic links for git
 echo "Creating git symlinks..."
-ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
-ln -sf ~/dotfiles/.gitignore_global ~/.gitignore_global
+ln -sf "$DOTFILES/.gitconfig" ~/.gitconfig
+ln -sf "$DOTFILES/.gitignore_global" ~/.gitignore_global
 
 # Setting up config directories
 echo "Setting up configurations..."
 mkdir -p ~/.config
 
 # Create symlinks for configs
-ln -sf ~/dotfiles/.config/nvim ~/.config/nvim
-ln -sf ~/dotfiles/.config/wezterm ~/.config/wezterm
-ln -sf ~/dotfiles/.config/yazi ~/.config/yazi
-ln -sf ~/dotfiles/.config/aerospace ~/.config/aerospace
+ln -sf "$DOTFILES/.config/nvim" ~/.config/nvim
+ln -sf "$DOTFILES/.config/wezterm" ~/.config/wezterm
+ln -sf "$DOTFILES/.config/yazi" ~/.config/yazi
+ln -sf "$DOTFILES/.config/aerospace" ~/.config/aerospace
+
+# Clean up existing Yazi function from zshrc
+sed -i '' '/^# Yazi shell wrapper/,/^}$/d' ~/.zshrc
 
 # Add Yazi function to zshrc if it doesn't exist
 if ! grep -q "function y()" ~/.zshrc; then
@@ -58,11 +70,9 @@ function y() {
 EOL
 fi
 
-# Set nvim as default editor in zshrc if not already set
-if ! grep -q "export EDITOR=" ~/.zshrc; then
-    echo "Setting Neovim as default editor..."
-    echo 'export EDITOR=nvim' >> ~/.zshrc
-fi
+# Clean up and set nvim as default editor in zshrc
+sed -i '' '/^export EDITOR=/d' ~/.zshrc
+echo 'export EDITOR=nvim' >> ~/.zshrc
 
 # Install Yazi theme
 echo "Installing Yazi theme..."
