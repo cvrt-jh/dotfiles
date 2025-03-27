@@ -6,17 +6,14 @@ echo "🛠 Setting up environment..."
 chmod +x config-shell.sh
 chmod +x install-apps.sh
 
-# Optional: run setup steps right away
-read -r -p "Run terminal config now? [Y/n]: " run_config
-run_config=${run_config,,}
-if [[ ! "$run_config" =~ ^(n|no)$ ]]; then
+# Only run shell config if not already done
+if [ ! -f "$HOME/.cvrt_shell_configured" ]; then
   ./config-shell.sh
+else
+  echo "✅ Shell already configured. Skipping shell setup."
 fi
 
-read -r -p "Run app installation now? [Y/n]: " run_apps
-run_apps=${run_apps,,}
-if [[ ! "$run_apps" =~ ^(n|no)$ ]]; then
-  ./install-apps.sh
-fi
+# Always run app install (idempotent)
+./install-apps.sh
 
-echo "✅ Setup complete."
+echo "🎉 Setup complete."
