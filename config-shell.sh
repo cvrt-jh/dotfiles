@@ -37,14 +37,9 @@ fi
 # Create marker so setup.sh doesn't re-run this
 touch "$HOME/.cvrt_shell_configured"
 
-# Prompt to restart shell
-echo ""
-read -r -p "Do you want to restart the shell into Zsh now? [Y/n] (just press Enter for Yes): " response
-# Convert response to lowercase using tr instead of ${response,,}
-response=$(echo "$response" | tr '[:upper:]' '[:lower:]')
-if [[ "$response" =~ ^(n|no)$ ]]; then
-  echo "👋 Okay! Restart your terminal later to apply changes."
-else
-  echo "🔄 Restarting shell into Zsh..."
-  exec zsh
-fi
+echo "✅ Shell configuration complete!"
+echo "🔄 Please restart your terminal after setup is complete for changes to take effect."
+
+# Don't automatically restart the shell - let the user decide when to restart
+# This avoids the loop issue
+exit 0
