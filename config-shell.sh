@@ -2,6 +2,12 @@
 
 echo "🔧 Configuring Zsh and Homebrew..."
 
+# Check if already configured
+if [ -f "$HOME/.cvrt_shell_configured" ]; then
+  echo "⚠️  Shell already configured. Skipping."
+  exit 0
+fi
+
 # Install Homebrew if it's not installed
 if ! command -v brew &>/dev/null; then
   echo "🍺 Installing Homebrew..."
@@ -20,7 +26,7 @@ fi
 # Apply to current session
 eval "$("$BREW_PREFIX"/bin/brew shellenv)"
 
-# Set Zsh as default shell
+# Set Zsh as default shell if needed
 if [ "$SHELL" != "/bin/zsh" ]; then
   echo "💻 Changing default shell to Zsh..."
   chsh -s /bin/zsh
@@ -28,6 +34,10 @@ else
   echo "✅ Zsh is already the default shell."
 fi
 
+# Create marker so setup.sh doesn't re-run this
+touch "$HOME/.cvrt_shell_configured"
+
+# Prompt to restart shell
 echo ""
 read -r -p "Do you want to restart the shell into Zsh now? [Y/n] (just press Enter for Yes): " response
 response=${response,,} # lowercase
