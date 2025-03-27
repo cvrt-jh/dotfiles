@@ -40,7 +40,8 @@ touch "$HOME/.cvrt_shell_configured"
 # Prompt to restart shell
 echo ""
 read -r -p "Do you want to restart the shell into Zsh now? [Y/n] (just press Enter for Yes): " response
-response=${response,,} # lowercase
+# Convert response to lowercase using tr instead of ${response,,}
+response=$(echo "$response" | tr '[:upper:]' '[:lower:]')
 if [[ "$response" =~ ^(n|no)$ ]]; then
   echo "👋 Okay! Restart your terminal later to apply changes."
 else
