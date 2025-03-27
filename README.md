@@ -13,7 +13,7 @@ Make sure Git is available (macOS will prompt you if needed):
 Run this one-liner to clone the repo and start setup:
 
   ```bash
-  bash -c \"$(curl -fsSL https://raw.githubusercontent.com/cvrt-jh/dotfiles/main/bootstrap.sh)\"
+  bash -c "$(curl -fsSL https://raw.githubusercontent.com/cvrt-jh/dotfiles/main/bootstrap.sh)"
   ```
 
 Or manually:
