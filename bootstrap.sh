@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Bootstrap script with comprehensive status checks and menu-based approach
+# Bootstrap script with improved status detection
 
 REPO_URL="https://github.com/cvrt-jh/dotfiles.git"
 TARGET_DIR="$HOME/dotfiles"
@@ -20,8 +20,16 @@ print_header() {
   echo
 }
 
-# Check component status
+# Check component status with improved detection
 check_status() {
+  # Debug marker file
+  echo -e "Debug: Checking for marker file at $HOME/.cvrt_shell_configured"
+  if [ -f "$HOME/.cvrt_shell_configured" ]; then
+    echo -e "Debug: Marker file exists"
+  else
+    echo -e "Debug: Marker file does not exist"
+  fi
+
   # Shell Configuration Status
   SHELL_CONFIGURED=false
   if [ -f "$HOME/.cvrt_shell_configured" ]; then
@@ -169,7 +177,8 @@ display_menu() {
   echo "3) Link Configuration Files (Neovim, Aerospace, etc.)"
   echo "4) Run Complete Setup (all of the above)"
   echo "5) Refresh Status"
-  echo "6) Exit"
+  echo "6) Create Shell Config Marker File Manually"
+  echo "7) Exit"
   echo
 }
 
@@ -209,7 +218,19 @@ configure_shell() {
   else
     echo -e "${YELLOW}🔧 Setting up shell environment...${NC}"
     ./config-shell.sh
-    echo -e "${GREEN}✅ Shell setup complete.${NC}"
+    
+    # Verify marker file was created
+    if [ -f "$HOME/.cvrt_shell_configured" ]; then
+      echo -e "${GREEN}✅ Shell setup complete. Marker file created.${NC}"
+    else
+      echo -e "${RED}⚠️ Shell setup may have completed but marker file was not created.${NC}"
+      echo -e "${YELLOW}Would you like to create the marker file manually? (y/n)${NC}"
+      read -r response
+      if [[ "$response" =~ ^[Yy]$ ]]; then
+        touch "$HOME/.cvrt_shell_configured"
+        echo -e "${GREEN}✅ Marker file created manually.${NC}"
+      fi
+    fi
   fi
 }
 
@@ -250,6 +271,18 @@ link_configs() {
   echo -e "${GREEN}✅ Configuration linking complete.${NC}"
 }
 
+# Create shell config marker manually
+create_marker_manually() {
+  echo -e "${YELLOW}Creating shell configuration marker file manually...${NC}"
+  touch "$HOME/.cvrt_shell_configured"
+  
+  if [ -f "$HOME/.cvrt_shell_configured" ]; then
+    echo -e "${GREEN}✅ Marker file created successfully.${NC}"
+  else
+    echo -e "${RED}❌ Failed to create marker file.${NC}"
+  fi
+}
+
 # Main function
 main() {
   ensure_git
@@ -262,7 +295,7 @@ main() {
     display_status
     display_menu
     
-    read -p "Enter your choice (1-6): " choice
+    read -p "Enter your choice (1-7): " choice
     
     case $choice in
       1)
@@ -289,6 +322,10 @@ main() {
         # Just refresh status - it will happen on next loop iteration
         ;;
       6)
+        create_marker_manually
+        read -p "Press Enter to continue..."
+        ;;
+      7)
         echo -e "${BLUE}👋 Exiting.${NC}"
         exit 0
         ;;
